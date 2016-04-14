@@ -6,7 +6,8 @@ var userController = function(User) {
             image = req.body.image,
             query = {
                 username: username.toLowerCase()
-            };
+            };,
+        email = req.body.email;
 
         User.findOne(query, function(err, user) {
             if (err) {
@@ -25,6 +26,7 @@ var userController = function(User) {
                 nickname: username,
                 passHash: passHash,
                 image: image,
+                email: email,
                 token: (function(username) {
                     var len = 60,
                         chars = '0123456789',

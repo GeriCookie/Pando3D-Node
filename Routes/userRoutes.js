@@ -62,60 +62,7 @@ var routes = function(User) {
             });
         });
 
-    userRouter.put('/:userId', passport.authenticate('bearer', {
-        session: false
-    }), function(req, res) {
-        var currentUser = req.user;
-        User.findById(req.params.userId, function(err, user) {
-            if (err) {
-                res.status(500).send(err);
-            } else if (user) {
-                if (!user.friends) {
-                    user.friends = [];
-                }
 
-                if (user._id.toString() === currentUser._id.toString()) {
-                    res.status(500).send({
-                        message: "You cannot add yourself to friends"
-                    });
-                }
-
-                var index = user.friends.findIndex(function(friend) {
-                    return friend.userId.toString() == currentUser._id.toString();
-                });
-                console.log(index);
-                if (index >= 0) {
-                    res.json({
-                        username: user.nickname,
-                        userId: user._id,
-                        friends: user.friends
-                    });
-                } else {
-                    user.friends.push({
-                        userId: currentUser._id,
-                        username: currentUser.nickname
-                    });
-
-                    currentUser.friends.push({
-                        userId: user._id,
-                        username: user.nickname
-                    });
-
-                    currentUser.save();
-
-                    user.save(function() {
-                        res.json({
-                            username: user.nickname,
-                            userId: user._id,
-                            friends: user.friends
-                        });
-                    });
-                }
-            } else {
-                res.status(404).send('no user found');
-            }
-        });
-    });
     return userRouter;
 };
 module.exports = routes;
